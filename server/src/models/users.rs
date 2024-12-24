@@ -3,6 +3,7 @@ use sqlx::{types::Json, FromRow};
 
 use crate::utils::xid::Xid;
 
+#[allow(dead_code)]
 #[derive(Debug, FromRow)]
 pub struct User {
     pub id: Xid,
@@ -12,6 +13,7 @@ pub struct User {
     pub email: String,
 }
 
+#[allow(dead_code)]
 #[derive(Debug, FromRow)]
 pub struct UserIdentity {
     pub id: Xid,
@@ -19,6 +21,7 @@ pub struct UserIdentity {
     pub data: Json<serde_json::Value>,
 }
 
+#[allow(dead_code)]
 #[derive(Debug, FromRow)]
 pub struct UserRefreshToken {
     pub id: Xid,

@@ -2,6 +2,7 @@
 pub struct Xid(xid::Id);
 
 impl Xid {
+    #[allow(clippy::inherent_to_string)]
     pub fn to_string(&self) -> String {
         self.0.to_string()
     }
