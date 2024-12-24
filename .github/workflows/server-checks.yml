@@ -39,7 +39,7 @@ jobs:
 
       - name: Run Migrations
         env:
-          DATABASE_URL: postgresql://postgres:password@postgres:5432/floppy
+          DATABASE_URL: postgresql://postgres:password@postgres/floppy
         run: sqlx migrate run
 
       - name: Use Cached Build
@@ -50,7 +50,7 @@ jobs:
 
       - name: Build Project
         env:
-          DATABASE_URL: postgresql://postgres:password@postgres:5432/floppy
+          DATABASE_URL: postgresql://postgres:password@postgres/floppy
         run: cargo build
 
       - name: Check Formatting
