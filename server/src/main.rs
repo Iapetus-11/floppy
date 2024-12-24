@@ -1,6 +1,10 @@
 use config::{load_config, Config};
 use core::panic;
-use poem::{listener::TcpListener, middleware::AddData, EndpointExt, Server};
+use poem::{
+    listener::TcpListener,
+    middleware::{AddData, NormalizePath, TrailingSlash},
+    EndpointExt, Server,
+};
 use std::{
     env::{self},
     error::Error,
@@ -36,6 +40,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
 async fn serve_api(config: Config, pool: sqlx::Pool<sqlx::Postgres>) -> Result<(), Box<dyn Error>> {
     let routes = routes::setup_routes()
+        .with(NormalizePath::new(TrailingSlash::Always))
         .with(AddData::new(config.clone()))
         .with(AddData::new(pool))
         .inspect_all_err(|e| {
