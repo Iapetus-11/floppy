@@ -32,9 +32,6 @@ jobs:
         with:
           components: rustfmt, clippy
 
-      - name: Debug
-        run: git diff
-
       - name: Install SQLX CLI
         run: cargo install sqlx-cli
 
