@@ -3,7 +3,7 @@ name: Test Server
 on: [push, pull_request]
 
 jobs:
-  test:
+  server-checks:
     runs-on: ubuntu-latest
 
     defaults:
