@@ -1,0 +1,57 @@
+name: Test Server
+
+on: [push, pull_request]
+
+jobs:
+  server-checks:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: server
+
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: password
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: |
+            server
+
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          components: rustfmt, clippy
+
+      - name: Install SQLX CLI
+        run: cargo install sqlx-cli
+
+      - name: Run Migrations
+        env:
+          DATABASE_URL: postgresql://postgres:password@localhost:5432/floppy
+        run: sqlx database create && sqlx migrate run
+
+      - name: Build Project
+        env:
+          DATABASE_URL: postgresql://postgres:password@localhost:5432/floppy
+        run: cargo build --release
+
+      - name: Check Formatting
+        run: cargo fmt --check
+
+      - name: Run Clippy
+        env:
+          DATABASE_URL: postgresql://postgres:password@localhost:5432/floppy
+        run: cargo clippy
