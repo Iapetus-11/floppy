@@ -37,11 +37,11 @@ jobs:
       #     key: server-${{ runner.os }}-${{ hashFiles('$HOME/.cargo/registry/**/*') }}
 
       - name: Use Cached Build
-        uses: actions/cache@v4
+        uses: actions/cache@v2
         with:
           path: |
-            server/**/target
-          # key: server-deps-${{ runner.os }}-${{ hashFiles('server/Cargo.lock') }}
+            **/server/target
+
 
       - name: Debug
         run: git diff
