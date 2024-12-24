@@ -30,11 +30,11 @@ jobs:
         with:
           components: rustfmt, clippy
 
-      - name: Use Cached SQLX CLI
-        uses: actions/cache@v4
-        with:
-          path: $HOME/.cargo/registry/
-          key: server-${{ runner.os }}-${{ hashFiles('$HOME/.cargo/registry/**/*') }}
+      # - name: Use Cached SQLX CLI
+      #   uses: actions/cache@v4
+      #   with:
+      #     path: $HOME/.cargo/registry/
+      #     key: server-${{ runner.os }}-${{ hashFiles('$HOME/.cargo/registry/**/*') }}
 
       - name: Install SQLX CLI
         run: cargo install sqlx-cli
