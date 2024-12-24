@@ -17,6 +17,15 @@ jobs:
           with:
             components: rustfmt, clippy
 
+        - name: Use Cached Build
+          uses: actions/cache@v4
+          with:
+            path: target
+            key: server-${{ runner.os }}-${{ hashFiles('Cargo.lock') }}
+
+        - name: Build Project
+          run: cargo build
+
         - name: Check Formatting
           run: cargo fmt --check
   
