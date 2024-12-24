@@ -9,8 +9,7 @@ use serde::Deserialize;
 use crate::{
     config::Config,
     models::users::UserRefreshToken,
-    utils::{
-        response_errors::{internal_server_error, ForbiddenError},
+    utils::{response_errors::{internal_server_error, ForbiddenError},
         security::ensure_execution_time,
         user_security::{self, generate_access_token, hash_refresh_token},
     },
