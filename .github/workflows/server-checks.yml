@@ -17,6 +17,9 @@ jobs:
         #   with:
         #     components: rustfmt, clippy
 
+        - name: Try Something
+          run: cargo fmt --all --manifest-path=./Cargo.toml -- --color=always --check 2>/dev/null
+
         - name: Check Formatting
           uses: actions-rust-lang/rustfmt@v1
   
