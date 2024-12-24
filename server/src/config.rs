@@ -6,6 +6,7 @@ pub struct Config {
     pub database_pool_size: u32,
     pub server_host_address: String,
     pub jwt_signing_key: String,
+    pub frontend_url: String,
 }
 
 fn load_env<T: FromStr>(key: &str) -> T {
@@ -29,11 +30,13 @@ pub fn load_config() -> Config {
     let database_pool_size: u32 = load_env("DATABASE_POOL_SIZE");
     let server_host_address: String = load_env("SERVER_HOST_ADDRESS");
     let jwt_signing_key: String = load_env("JWT_SIGNING_KEY");
+    let frontend_url = load_env("FRONTEND_URL");
 
     Config {
         database_url,
         database_pool_size,
         server_host_address,
         jwt_signing_key,
+        frontend_url,
     }
 }
