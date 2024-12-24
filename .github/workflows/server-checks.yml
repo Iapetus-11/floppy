@@ -35,7 +35,7 @@ jobs:
           key: server-${{ runner.os }}-${{ hashFiles('Cargo.lock') }}
 
       - name: Install SQLX CLI
-        run: cargo install sqlx-cli`
+        run: cargo install sqlx-cli
 
       - name: Run Migrations
         env:
