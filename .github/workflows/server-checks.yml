@@ -52,4 +52,6 @@ jobs:
         run: cargo fmt --check
 
       - name: Run Clippy
+        env:
+          DATABASE_URL: postgresql://postgres:password@localhost:5432/floppy
         run: cargo clippy
