@@ -2,7 +2,7 @@ use config::{load_config, Config};
 use core::panic;
 use poem::{
     listener::TcpListener,
-    middleware::{AddData, NormalizePath, TrailingSlash},
+    middleware::{AddData, CatchPanic, NormalizePath, TrailingSlash},
     EndpointExt, Server,
 };
 use std::{
@@ -43,9 +43,7 @@ async fn serve_api(config: Config, pool: sqlx::Pool<sqlx::Postgres>) -> Result<(
         .with(NormalizePath::new(TrailingSlash::Always))
         .with(AddData::new(config.clone()))
         .with(AddData::new(pool))
-        .inspect_all_err(|e| {
-            println!("Error: {e}");
-        });
+        .with(CatchPanic::new());
 
     println!("Starting API on http://{0} ...", config.server_host_address);
 

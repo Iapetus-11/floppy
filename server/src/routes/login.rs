@@ -17,7 +17,7 @@ use crate::{
     config::Config,
     models::users::User,
     utils::{
-        response_errors::{internal_server_error, ForbiddenError},
+        response_errors::ForbiddenError,
         security::ensure_execution_time,
         user_security::{self, hash_refresh_token},
     },
@@ -55,7 +55,7 @@ pub async fn login_email_and_password(
         )
         .fetch_optional(db.0)
         .await
-        .map_err(internal_server_error)?;
+        .unwrap();
 
         if user.is_none() {
             return Err(ForbiddenError.into());
@@ -69,7 +69,7 @@ pub async fn login_email_and_password(
         )
         .fetch_optional(db.0)
         .await
-        .map_err(internal_server_error)?;
+        .unwrap();
 
         if user_identity.is_none() {
             return Err(ForbiddenError.into());
@@ -98,7 +98,7 @@ pub async fn login_email_and_password(
         )
         .execute(db.0)
         .await
-        .map_err(internal_server_error)?;
+        .unwrap();
 
         Ok(tokens)
     })).await;

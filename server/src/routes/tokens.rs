@@ -15,7 +15,7 @@ use crate::{
     config::Config,
     models::users::UserRefreshToken,
     utils::{
-        response_errors::{internal_server_error, ForbiddenError},
+        response_errors::ForbiddenError,
         security::ensure_execution_time,
         user_security::{self, generate_access_token, hash_refresh_token},
     },
@@ -50,7 +50,7 @@ pub async fn refresh(
             )
             .fetch_optional(db.0)
             .await
-            .map_err(internal_server_error)?;
+            .unwrap();
 
             if refresh_token.is_none() {
                 return Err(ForbiddenError.into());
@@ -63,7 +63,7 @@ pub async fn refresh(
             )
             .execute(db.0)
             .await
-            .map_err(internal_server_error)?;
+            .unwrap();
 
             Ok(generate_access_token(&config.jwt_signing_key, &refresh_token.user_id))
         })

@@ -11,8 +11,3 @@ impl ResponseError for ForbiddenError {
         StatusCode::FORBIDDEN
     }
 }
-
-pub fn internal_server_error<T: Debug>(err: T) -> poem::Error {
-    println!("Unhandled internal server error: {:#?}", err);
-    poem::Error::from_status(StatusCode::INTERNAL_SERVER_ERROR)
-}
