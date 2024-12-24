@@ -41,7 +41,7 @@ jobs:
         with:
           path: |
             server/**/target
-          key: server-deps-${{ runner.os }}-${{ hashFiles('server/Cargo.lock') }}
+          # key: server-deps-${{ runner.os }}-${{ hashFiles('server/Cargo.lock') }}
 
       - name: Debug
         run: git diff
