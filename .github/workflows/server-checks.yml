@@ -34,6 +34,9 @@ jobs:
           path: target
           key: server-${{ runner.os }}-${{ hashFiles('Cargo.lock') }}
 
+      - name: Install SQLX CLI
+        run: cargo install sqlx-cli`
+
       - name: Run Migrations
         env:
           DATABASE_URL: postgresql://postgres:password@localhost:5432/floppy
