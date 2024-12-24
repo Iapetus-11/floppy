@@ -26,22 +26,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: Swatinem/rust-cache@v2
+
       - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           components: rustfmt, clippy
-
-      # - name: Use Cached SQLX CLI
-      #   uses: actions/cache@v4
-      #   with:
-      #     path: $HOME/.cargo/registry/
-      #     key: server-${{ runner.os }}-${{ hashFiles('$HOME/.cargo/registry/**/*') }}
-
-      - name: Use Cached Build
-        uses: actions/cache@v2
-        with:
-          path: |
-            **/server/target
-
 
       - name: Debug
         run: git diff
