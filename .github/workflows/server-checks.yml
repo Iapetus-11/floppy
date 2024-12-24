@@ -32,7 +32,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: target
-          key: server-${{ runner.os }}-${{ hashFiles('Cargo.lock') }}
+          key: server-${{ runner.os }}-${{ hashFiles('server/Cargo.lock') }}
 
       - name: Install SQLX CLI
         run: cargo install sqlx-cli
