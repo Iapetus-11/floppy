@@ -28,11 +28,11 @@ jobs:
         with:
           components: rustfmt, clippy
 
-      - name: Use Cached Build
+      - name: Use Cached SQLX CLI
         uses: actions/cache@v4
         with:
           path: target
-          key: server-${{ runner.os }}-${{ hashFiles('server/Cargo.lock') }}
+          key: server-${{ runner.os }}-${{ hashFiles('$HOME/.cargo/registry/**/*') }}
 
       - name: Install SQLX CLI
         run: cargo install sqlx-cli
@@ -41,6 +41,12 @@ jobs:
         env:
           DATABASE_URL: postgresql://postgres:password@localhost:5432/floppy
         run: sqlx migrate run
+
+      - name: Use Cached Build
+        uses: actions/cache@v4
+        with:
+          path: target
+          key: server-${{ runner.os }}-${{ hashFiles('server/Cargo.lock') }}
 
       - name: Build Project
         env:
