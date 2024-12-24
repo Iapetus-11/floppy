@@ -1,3 +1,7 @@
+<script setup lang="ts">
+    import File from '~/components/fileView/File.vue';
+</script>
+
 <template>
-    <h1 class="text-2xl text-red-500">Hello, world!</h1>
+    <File />
 </template>

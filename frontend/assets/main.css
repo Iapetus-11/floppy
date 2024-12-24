@@ -1,3 +1,39 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover, 
+    input:-webkit-autofill:focus, 
+    input:-webkit-autofill:active{
+        -webkit-box-shadow: 0 0 0 30px black inset !important;
+        -webkit-text-fill-color: rgb(229 231 235) !important;
+    }
+
+    .outlined {
+        @apply outline-none border rounded-md;
+    }
+
+    * {
+        @apply border-gray-200 placeholder:!text-gray-300/80;
+    }
+
+    *:disabled {
+        @apply cursor-not-allowed;
+    }
+
+    body {
+        @apply text-gray-200 bg-black select-none;
+    }
+}
+
+@layer components {
+    .text-input {
+        @apply bg-black text-gray-200 outlined py-2 px-2 focus:border-teal-300 transition-colors;
+    }
+
+    .button {
+        @apply outlined hover:enabled:bg-teal-600 hover:enabled:border-transparent transition-all;
+    }
+}
