@@ -36,15 +36,14 @@ jobs:
       #     path: $HOME/.cargo/registry/
       #     key: server-${{ runner.os }}-${{ hashFiles('$HOME/.cargo/registry/**/*') }}
 
-      - name: Debug
-        run:
-          ls -a
-
       - name: Use Cached Build
         uses: actions/cache@v4
         with:
           path: target
-          key: server-deps-${{ runner.os }}-${{ hashFiles('Cargo.lock') }}
+          key: server-deps-${{ runner.os }}-${{ hashFiles('server/Cargo.lock') }}
+
+      - name: Debug
+        run: git diff
 
       - name: Install SQLX CLI
         run: cargo install sqlx-cli
