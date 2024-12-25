@@ -50,7 +50,7 @@ function createAuth() {
     // --------------------------------------------------------------------------------
 
     function isAccessTokenExpired(): boolean {
-        return (Date.now() / 1000) > (tokenData.value.iat + tokenData.value.exp);
+        return (Date.now() / 1000) > tokenData.value.exp;
     }
 
     const refreshState = ref<UnwrapNestedRefs<PromiseState<void>>>();
