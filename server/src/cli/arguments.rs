@@ -1,4 +1,4 @@
-use std::{any::type_name, env::Args, str::FromStr};
+use std::{any::type_name, env::Args, fmt::Display, str::FromStr};
 use thiserror::Error;
 
 #[derive(Error, Debug)]
@@ -8,6 +8,15 @@ pub enum ArgumentError {
 
     #[error("Expected argument {} to be of type {}", .arg_name, .arg_type)]
     Type { arg_name: String, arg_type: String },
+}
+
+#[derive(Error, Debug)]
+pub struct CommandError(pub String);
+
+impl Display for CommandError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(&self.0)
+    }
 }
 
 pub fn require_arg<T: FromStr>(arg_name: String, args: &mut Args) -> Result<T, ArgumentError> {

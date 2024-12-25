@@ -6,7 +6,7 @@ use rand::rngs::OsRng;
 use serde_json::json;
 
 use crate::{
-    cli::arguments::{handle_arg_error, require_arg},
+    cli::arguments::{handle_arg_error, require_arg, CommandError},
     config::Config,
     utils::xid::Xid,
 };
@@ -31,7 +31,7 @@ pub async fn create_user(
 
     if email_already_in_use.0 {
         println!("Email address {:?} is already in use", email);
-        return Ok(());
+        return Err(CommandError("Email address already in use".to_string()).into());
     }
 
     let mut db = db.begin().await?;
