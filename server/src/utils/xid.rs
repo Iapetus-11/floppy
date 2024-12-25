@@ -1,3 +1,7 @@
+use std::str::FromStr;
+
+use serde::Serialize;
+
 #[derive(Debug)]
 pub struct Xid(xid::Id);
 
@@ -22,5 +26,22 @@ impl From<Vec<u8>> for Xid {
         id_bytes.clone_from_slice(&value);
 
         Xid(xid::Id(id_bytes))
+    }
+}
+
+impl TryFrom<&str> for Xid {
+    type Error = xid::ParseIdError;
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        xid::Id::from_str(value).map(Xid)
+    }
+}
+
+impl Serialize for Xid {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        serializer.serialize_str(&self.to_string())
     }
 }
