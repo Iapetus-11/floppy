@@ -70,6 +70,7 @@ pub fn hash_refresh_token(refresh_token: &str) -> Vec<u8> {
 }
 
 #[allow(dead_code)]
+#[derive(Debug)]
 pub struct AuthenticatedUser {
     pub access_token: String,
     pub id: Xid,
@@ -94,7 +95,6 @@ impl<'a> poem::FromRequest<'a> for AuthenticatedUser {
             })?;
 
         if let Some(access_token) = auth_header.strip_prefix("Bearer ") {
-            println!("bruh: {access_token}");
             let decoded_token = jsonwebtoken::decode::<UserAccessTokenClaims>(
                 access_token,
                 &DecodingKey::from_secret(config.jwt_signing_key.as_bytes()),
@@ -106,7 +106,10 @@ impl<'a> poem::FromRequest<'a> for AuthenticatedUser {
                     "Failed to decode JWT access token: {:?}",
                     token_decode_error
                 );
-                return Err(poem::Error::from_string("Authorization header was invalid", StatusCode::FORBIDDEN));
+                return Err(poem::Error::from_string(
+                    "Authorization header was invalid",
+                    StatusCode::FORBIDDEN,
+                ));
             }
             let decoded_token = decoded_token.unwrap();
 
