@@ -1,8 +1,14 @@
-use std::str::FromStr;
+use std::{fmt, str::FromStr};
 
-use serde::Serialize;
+use serde::{
+    de::{self, Visitor},
+    Deserialize, Deserializer, Serialize,
+};
 
-#[derive(Debug)]
+/**
+ * Wrapper around xid::Id with improved ergonomics
+ */
+#[derive(Debug, Copy, Clone)]
 pub struct Xid(xid::Id);
 
 impl Xid {
@@ -43,5 +49,45 @@ impl Serialize for Xid {
         S: serde::Serializer,
     {
         serializer.serialize_str(&self.to_string())
+    }
+}
+
+struct XidVisitor;
+
+impl<'de> Visitor<'de> for XidVisitor {
+    type Value = Xid;
+
+    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        formatter.write_str("A valid string representation of an XID")
+    }
+
+    fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
+    where
+        E: de::Error,
+    {
+        Xid::try_from(v).map_err(|_| E::custom("Expected valid XID string representation"))
+    }
+
+    fn visit_string<E>(self, v: String) -> Result<Self::Value, E>
+    where
+        E: de::Error,
+    {
+        Xid::try_from(v.as_str()).map_err(|_| E::custom("Expected valid XID string representation"))
+    }
+
+    fn visit_borrowed_str<E>(self, v: &'de str) -> Result<Self::Value, E>
+    where
+        E: de::Error,
+    {
+        Xid::try_from(v).map_err(|_| E::custom("Expected valid XID string representation"))
+    }
+}
+
+impl<'de> Deserialize<'de> for Xid {
+    fn deserialize<D>(deserializer: D) -> Result<Xid, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        deserializer.deserialize_str(XidVisitor)
     }
 }
