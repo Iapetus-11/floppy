@@ -1,5 +1,6 @@
 use std::{
-    collections::HashMap, error::Error, fs, os::unix::fs::MetadataExt, path::PathBuf, str::FromStr, sync::mpsc, thread
+    collections::HashMap, error::Error, fs, os::unix::fs::MetadataExt, path::PathBuf, str::FromStr,
+    sync::mpsc, thread,
 };
 
 use chrono::{DateTime, Utc};
@@ -185,8 +186,8 @@ pub async fn reindex_local_folder_vault(
                     .created()
                     .map(|created_at| Some(DateTime::<Utc>::from(created_at)))
                     .unwrap_or(None),
-                    Some(metadata.size() as i64),
-            )
+                Some(metadata.size() as i64),
+            ),
         };
 
         sqlx::query!(
