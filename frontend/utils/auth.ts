@@ -16,7 +16,7 @@ function createAuth() {
     const accessToken = ref();
     const refreshToken = ref();
 
-    const isAuthenticated = computed(() => !!accessToken.value);
+    const isAuthenticated = computed(() => !!refreshToken.value);
     const tokenData = computed<Record<string, any>>(() => {
         const b64Data = accessToken.value?.split('.')[1]?.replace(/-/g, '+').replace(/_/g, '/');
         return JSON.parse(decodeURIComponent(

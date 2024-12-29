@@ -5,9 +5,10 @@ edition = "2021"
 
 [dependencies]
 argon2 = "0.5.3"
-chrono = "0.4.39"
+chrono = { version = "0.4.39", features = ["serde"] }
 dotenv = "0.15.0"
 jsonwebtoken = "9.3.0"
+notify = "7.0.0"
 poem = "3.1.5"
 rand = "0.8.5"
 serde = "1.0.216"
