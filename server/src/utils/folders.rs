@@ -7,6 +7,7 @@ pub enum FileType {
 }
 
 impl FileType {
+    #[allow(clippy::inherent_to_string, clippy::wrong_self_convention)]
     pub fn to_string(&self) -> String {
         match self {
             FileType::Folder => "folder",
@@ -18,6 +19,13 @@ impl FileType {
 
 pub fn walk_directory(path: PathBuf) -> Result<Vec<(PathBuf, FileType)>, io::Error> {
     let mut out = vec![];
+
+    let dir_results = read_dir(&path);
+
+    if let Err(error) = dir_results {
+        println!("An error occurred while indexing directory {path:?}: {error:?}");
+        return Ok(vec![]);
+    }
 
     for file in read_dir(path)? {
         let file = file?;

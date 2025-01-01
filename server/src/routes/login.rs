@@ -50,7 +50,7 @@ pub async fn login_email_and_password(
     let tokens: Result<user_security::UserTokens, Error> = ensure_execution_time(Duration::from_millis(1000), || Box::pin(async {
         let user = sqlx::query_as!(
             User,
-            "SELECT id, created_at, last_login_at, name, email FROM users WHERE email ILIKE $1",
+            "SELECT id, created_at, last_login_at, name, email FROM users WHERE LOWER(email) = LOWER($1)",
             data.email,
         )
         .fetch_optional(db.0)

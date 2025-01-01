@@ -12,7 +12,7 @@ use serde::{
 pub struct Xid(xid::Id);
 
 impl Xid {
-    #[allow(clippy::inherent_to_string)]
+    #[allow(clippy::inherent_to_string, clippy::wrong_self_convention)]
     pub fn to_string(&self) -> String {
         self.0.to_string()
     }

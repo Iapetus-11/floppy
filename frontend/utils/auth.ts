@@ -56,12 +56,16 @@ function createAuth() {
     const refreshState = ref<UnwrapNestedRefs<PromiseState<void>>>();
     function performRefreshIfNeeded(): Promise<void> {
         if (!refreshToken.value) {
+            console.log('inside performRefreshIfNeeded - !refreshToken.value');
             return Promise.resolve();
         }
 
         if (!isAccessTokenExpired()) {
+            console.log('inside performRefreshIfNeeded - !isAccessTokenExpired()');
             return Promise.resolve();
         }
+
+        console.log("setting refreshState.value");
 
         refreshState.value = reactive(usePromise<void>(
             $fetch(`${import.meta.env.BASE_URL}/tokens/refresh/`, {
@@ -76,7 +80,10 @@ function createAuth() {
     }
 
     function getAccessToken(): Promise<string> {
+        console.log('Getting access token...');
+
         if (!isAuthenticated.value) {
+            console.log('nav to login screen b/c !isAuthenticated.value from getAccessToken');
             window.location.replace('/login');
             return new Promise(() => {});
         }
@@ -88,6 +95,7 @@ function createAuth() {
 
     function handleStorageEvent(ev: StorageEvent) {
         if (ev.key?.startsWith('auth__')) {
+            console.log('handleStorageEvent called');
             loadTokens();
         }
     }

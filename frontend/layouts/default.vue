@@ -7,13 +7,13 @@
 
     const route = useRoute();
 
-    const vaults = await useFetch<Vault[]>(`${config.public.apiBase}/vaults`, {
+    const vaultsRequest = await useFetch<Vault[]>(`${config.public.apiBase}/vaults`, {
         headers: { 'Authorization': `Bearer ${await auth.getAccessToken()}`},
         responseType: 'json',
     });
 
     provide('vaults', computed(() => {
-        const vaultsData = vaults.data.value;
+        const vaultsData = vaultsRequest.data.value;
         const vaultsMapping = new Map<string, Vault>();
 
         if (vaultsData) {
@@ -33,7 +33,7 @@
 
             <nav class="flex gap-2">
                 <NuxtLink
-                    v-for="vault in vaults.data.value"
+                    v-for="vault in vaultsRequest.data.value"
                     :key="vault.id"
                     :href="`/vaults/${vault.id}`"
                     class="outlined px-3 py-2 link-button"

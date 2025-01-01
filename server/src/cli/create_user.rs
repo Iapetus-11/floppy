@@ -24,7 +24,7 @@ pub async fn create_user(
     let password = require_arg::<String>("password".into(), args).map_err(&arg_error_handler)?;
 
     let email_already_in_use: (bool,) =
-        sqlx::query_as("SELECT EXISTS(SELECT FROM users WHERE email ILIKE $1)")
+        sqlx::query_as("SELECT EXISTS(SELECT FROM users WHERE LOWER(email) = LOWER($1))")
             .bind(&email)
             .fetch_one(&db)
             .await?;

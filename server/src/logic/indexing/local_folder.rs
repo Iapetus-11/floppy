@@ -41,13 +41,28 @@ fn watch_local_folder_vault(
             },
             Ok(event) => async_runtime.block_on(async {
                 struct EventFile {
+                    pathbuf: PathBuf,
                     path: String,
                     name: String,
+                    file_type: FileType,
                 }
 
-                let event_files = event.paths.iter().filter(|f| f != &&vault_path).map(|p| EventFile {
-                    path: p.as_os_str().to_string_lossy().to_string(),
-                    name: p.file_name().unwrap().to_string_lossy().to_string(),
+                let event_files = event.paths.iter().filter(|f| f != &&vault_path).filter_map(|p| {
+                    let file_type: FileType;
+                    if p.is_dir() {
+                        file_type = FileType::Folder;
+                    } else if p.is_file() {
+                        file_type = FileType::File;
+                    } else {
+                        return None;
+                    }
+
+                    Some(EventFile {
+                        pathbuf: p.to_path_buf(),
+                        path: p.as_os_str().to_string_lossy().to_string(),
+                        name: p.file_name().unwrap().to_string_lossy().to_string(),
+                        file_type,
+                    })
                 }).collect::<Vec<_>>();
 
                 // We get two modifies for a rename... one to yeet the old file and one for the new one, you have to
@@ -57,9 +72,32 @@ fn watch_local_folder_vault(
                         for file in event_files {
                             let file_id = Xid::new();
 
+                            let (created_at, file_size) = match file.pathbuf.metadata() {
+                                Err(_) => (None, None),
+                                Ok(metadata) => (
+                                    metadata
+                                        .created()
+                                        .map(|created_at| Some(DateTime::<Utc>::from(created_at)))
+                                        .unwrap_or(None),
+                                    Some(metadata.size() as i64),
+                                ),
+                            };
+
+                            let parent_id = sqlx::query!(
+                                "SELECT id FROM vault_files WHERE vault_id = $1 AND path_id = $2",
+                                vault.id.as_bytes(), file.pathbuf.parent().unwrap().to_string_lossy().to_string(),
+                            ).fetch_optional(&db)
+                            .await?;
+                            let parent_id = parent_id.map(|r| r.id);
+
+                            let file_type = match file.file_type {
+                                FileType::Folder => "folder",
+                                FileType::File => "file",
+                            };
+
                             sqlx::query!(
-                                "INSERT INTO vault_files (id, vault_id, path_id, name) VALUES ($1, $2, $3, $4)",
-                                file_id.as_bytes(), vault.id.as_bytes(), file.path, file.name,
+                                "INSERT INTO vault_files (id, vault_id, path_id, name, file_type, parent_id, created_at, size) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
+                                file_id.as_bytes(), vault.id.as_bytes(), file.path, file.name, file_type, parent_id, created_at, file_size,
                             ).execute(&db)
                             .await?;
                         }
@@ -157,6 +195,7 @@ pub async fn reindex_local_folder_vault(
 ) -> Result<usize, Box<dyn Error>> {
     let mut db = db.begin().await?;
 
+    println!("Deleting old index...");
     sqlx::query!(
         "DELETE FROM vault_files WHERE vault_id = $1",
         vault.id.as_bytes(),
@@ -167,9 +206,11 @@ pub async fn reindex_local_folder_vault(
     let mut file_count: usize = 0;
     let mut parent_map = HashMap::<PathBuf, Xid>::new();
 
-    for (file_path, file_type) in
-        walk_directory(PathBuf::from_str(vault.data["path"].as_str().unwrap())?)?
-    {
+    println!("Walking tree...");
+    let files = walk_directory(PathBuf::from_str(vault.data["path"].as_str().unwrap())?)?;
+
+    println!("Inserting db entries...");
+    for (file_path, file_type) in files {
         let id = Xid::new();
         let path_id = file_path.to_string_lossy().to_string();
         let name = file_path.file_name().unwrap().to_string_lossy().to_string();

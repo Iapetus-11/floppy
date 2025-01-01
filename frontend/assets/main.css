@@ -33,7 +33,7 @@
     }
 
     body {
-        @apply text-gray-200 bg-black select-none;
+        @apply text-gray-200 bg-black select-none overflow-y-scroll;
     }
 }
 
@@ -47,11 +47,11 @@
     }
 
     .button {
-        @apply outlined hover:enabled:bg-teal-600 hover:enabled:border-transparent transition-all;
+        @apply outlined text-gray-200 hover:enabled:bg-teal-600 hover:enabled:border-transparent transition-all;
     }
 
     .link-button {
-        @apply outlined hover:bg-teal-600 hover:border-transparent transition-all;
+        @apply outlined text-gray-200 hover:bg-teal-600 hover:border-transparent transition-all;
     }
 }
 
